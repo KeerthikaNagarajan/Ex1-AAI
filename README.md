@@ -1,27 +1,33 @@
-## Experiment 1: Implementation of Bayesian Networks
-## Name: Keerthika N
-## Register Number: 212221230049
 ## Date: 01.09.2024
+
+<h1 align="center">  
+   Experiment 1: Implementation of Bayesian Networks  
+</h1>  
+
+### Name: Keerthika N
+### Register Number: 212221230049
+
 ## Aim :
 To create a bayesian Network for the given dataset in Python
 ## Algorithm:
-Step 1:Import necessary libraries: pandas, networkx, matplotlib.pyplot, Bbn, Edge, EdgeType, BbnNode, Variable, EvidenceBuilder, InferenceController<br/>
-Step 2:Set pandas options to display more columns<br/>
-Step 3:Read in weather data from a CSV file using pandas<br/>
-Step 4:Remove records where the target variable RainTomorrow has missing values<br/>
-Step 5:Fill in missing values in other columns with the column mean<br/>
-Step 6:Create bands for variables that will be used in the model (Humidity9amCat, Humidity3pmCat, and WindGustSpeedCat)<br/>
-Step 7:Define a function to calculate probability distributions, which go into the Bayesian Belief Network (BBN)<br/>
-Step 8:Create BbnNode objects for Humidity9amCat, Humidity3pmCat, WindGustSpeedCat, and RainTomorrow, using the probs() function to calculate their probabilities<br/>
-Step 9:Create a Bbn object and add the BbnNode objects to it, along with edges between the nodes<br/>
-Step 10:Convert the BBN to a join tree using the InferenceController<br/>
-Step 11:Set node positions for the graph<br/>
-Step 12:Set options for the graph appearance<br/>
-Step 13:Generate the graph using networkx<br/>
-Step 14:Update margins and display the graph using matplotlib.pyplot<br/>
+Step 1: Import necessary libraries: pandas, networkx, matplotlib.pyplot, Bbn, Edge, EdgeType, BbnNode, Variable, EvidenceBuilder, InferenceController<br/>
+Step 2: Set pandas options to display more columns<br/>
+Step 3: Read in weather data from a CSV file using pandas<br/>
+Step 4: Remove records where the target variable RainTomorrow has missing values<br/>
+Step 5: Fill in missing values in other columns with the column mean<br/>
+Step 6: Create bands for variables that will be used in the model (Humidity9amCat, Humidity3pmCat, and WindGustSpeedCat)<br/>
+Step 7: Define a function to calculate probability distributions, which go into the Bayesian Belief Network (BBN)<br/>
+Step 8: Create BbnNode objects for Humidity9amCat, Humidity3pmCat, WindGustSpeedCat, and RainTomorrow, using the probs() function to calculate their probabilities<br/>
+Step 9: Create a Bbn object and add the BbnNode objects to it, along with edges between the nodes<br/>
+Step 10: Convert the BBN to a join tree using the InferenceController<br/>
+Step 11: Set node positions for the graph<br/>
+Step 12: Set options for the graph appearance<br/>
+Step 13: Generate the graph using networkx<br/>
+Step 14: Update margins and display the graph using matplotlib.pyplot<br/>
 
 ## Program:
 ```python
+
 import pandas as pd # for data manipulation
 import networkx as nx # for drawing graphs
 import matplotlib.pyplot as plt # for drawing graphs
@@ -36,24 +42,23 @@ from pybbn.pptc.inferencecontroller import InferenceController
 pd.options.display.max_columns=50
 
 # Read in the weather data csv
-df=pd.read_csv('/content/weatherAUS.csv', encoding='utf-8')
+df=pd.read_csv('weatherAUS.csv', encoding='utf-8')
+
 
 # Drop records where target RainTomorrow=NaN
 df=df[pd.isnull(df['RainTomorrow'])==False]
 # Drop the 'Date' column as it is not relevant for the model
 df = df.drop(columns='Date')
 
-# For other columns with missing values, fill them in with column mean for numeric columns only
+# For other columns with missing values, fill them in with column mean
 numeric_columns = df.select_dtypes(include=['number']).columns
-# Use .loc to explicitly modify the original DataFrame
-df.loc[:, numeric_columns] = df[numeric_columns].fillna(df[numeric_columns].mean())
+df[numeric_columns] = df[numeric_columns].fillna(df[numeric_columns].mean())
 
 # Create bands for variables that we want to use in the model
 df['WindGustSpeedCat']=df['WindGustSpeed'].apply(lambda x: '0.<=40'   if x<=40 else
                                                             '1.40-50' if 40<x<=50 else '2.>50')
 df['Humidity9amCat']=df['Humidity9am'].apply(lambda x: '1.>60' if x>60 else '0.<=60')
 df['Humidity3pmCat']=df['Humidity3pm'].apply(lambda x: '1.>60' if x>60 else '0.<=60')
-
 
 # Show a snaphsot of data
 print(df)
@@ -73,6 +78,7 @@ def probs(data, child, parent1=None, parent2=None):
                 prob=pd.crosstab([data[parent1],data[parent2]],data[child], margins=False, normalize='index').sort_index().to_numpy().reshape(-1).tolist()
     else: print("Error in Probability Frequency Calculations")
     return prob
+
 # Create nodes by using our earlier function to automatically calculate probabilities
 H9am = BbnNode(Variable(0, 'H9am', ['<=60', '>60']), probs(df, child='Humidity9amCat'))
 H3pm = BbnNode(Variable(1, 'H3pm', ['<=60', '>60']), probs(df, child='Humidity3pmCat', parent1='Humidity9amCat'))
@@ -91,6 +97,7 @@ bbn = Bbn() \
 
 # Convert the BBN to a join tree
 join_tree = InferenceController.apply(bbn)
+
 # Set node positions
 pos = {0: (-1, 2), 1: (-1, 0.5), 2: (1, 0.5), 3: (0, -1)}
 
@@ -113,18 +120,15 @@ ax = plt.gca()
 ax.margins(0.10)
 plt.axis("off")
 plt.show()
-print(probs(df, child='Humidity9amCat'))
-print(probs(df, child='Humidity3pmCat', parent1='Humidity9amCat'))
-print(probs(df, child='WindGustSpeedCat'))
-print(probs(df, child='RainTomorrow', parent1='Humidity3pmCat', parent2='WindGustSpeedCat'))
+
 
 ```
 ## Output:
-![image](https://github.com/user-attachments/assets/7cfeb449-3829-4309-a397-ff68a51e7c3a)
+![Screenshot 2024-11-08 at 10 55 04 AM](https://github.com/user-attachments/assets/48140198-d6f7-406e-9ad2-e42c2a1f307c)
 
-![image](https://github.com/user-attachments/assets/e490a60b-03d6-400e-a9ea-fec53d77b4cb)
+![Screenshot 2024-11-08 at 10 55 14 AM](https://github.com/user-attachments/assets/0d021f03-4779-4152-9bf1-d6bc470716a9)
 
-![image](https://github.com/user-attachments/assets/cbe4a8b6-bc54-4aef-bfd5-5bb02ae0a5cf)
+![Screenshot 2024-11-08 at 10 55 27 AM](https://github.com/user-attachments/assets/219f2cf6-3cf3-4915-a716-5eb90ab5faf2)
 
 ## Result:
 Thus a Bayesian Network is generated using Python
