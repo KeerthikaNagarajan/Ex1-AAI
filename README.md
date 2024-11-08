@@ -121,6 +121,10 @@ ax.margins(0.10)
 plt.axis("off")
 plt.show()
 
+print(probs(df, child='Humidity9amCat'))
+print(probs(df, child='Humidity3pmCat', parent1='Humidity9amCat'))
+print(probs(df, child='WindGustSpeedCat'))
+print(probs(df, child='RainTomorrow', parent1='Humidity3pmCat', parent2='WindGustSpeedCat'))
 
 ```
 ## Output:
@@ -129,6 +133,8 @@ plt.show()
 ![Screenshot 2024-11-08 at 10 55 14 AM](https://github.com/user-attachments/assets/0d021f03-4779-4152-9bf1-d6bc470716a9)
 
 ![Screenshot 2024-11-08 at 10 55 27 AM](https://github.com/user-attachments/assets/219f2cf6-3cf3-4915-a716-5eb90ab5faf2)
+
+![Screenshot 2024-11-08 at 2 02 44 PM](https://github.com/user-attachments/assets/92482ff7-1b6b-420b-955d-ced60e5edf2f)
 
 ## Result:
 Thus a Bayesian Network is generated using Python
