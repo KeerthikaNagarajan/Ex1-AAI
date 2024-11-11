@@ -1,4 +1,4 @@
-## Date: 01.09.2024
+## Date: 09.08.2024
 
 <h1 align="center">  
    Experiment 1: Implementation of Bayesian Networks  
